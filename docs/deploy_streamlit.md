@@ -1,71 +1,87 @@
 # Deploy no Streamlit Community Cloud
 
+## Repositório
+
+**GitHub:** https://github.com/douglaslpo/Projeto-SIDI
+
 ## Pré-requisitos
 
-- Repositório **público** no GitHub com este código
-- Conta em [share.streamlit.io](https://share.streamlit.io)
-- API key do Gemini ou OpenAI
+- Repositório público (já publicado)
+- Conta em [share.streamlit.io](https://share.streamlit.io) (login com GitHub)
+- API key do Gemini
 
-## Passo a passo
+## Passo a passo (5 min)
 
-### 1. Publicar no GitHub
+### 1. Criar app
 
-```powershell
-cd template-portfolio
-git init
-git add .
-git commit -m "Assistente LGPD com RAG — projeto de portfólio"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/assistente-lgpd-rag.git
-git push -u origin main
-```
+1. Acesse https://share.streamlit.io
+2. Clique **Create app**
+3. Preencha:
+   - **Repository:** `douglaslpo/Projeto-SIDI`
+   - **Branch:** `main`
+   - **Main file path:** `src/ui/streamlit_app.py`
+   - **App URL (opcional):** `projeto-sidi` → URL final: `https://projeto-sidi.streamlit.app`
 
-Confirme que `data/corpus/LEI_13709_LGPD.pdf` está no repositório (necessário para indexação).
+### 2. Configurar Secrets
 
-### 2. Criar app no Streamlit Cloud
-
-1. Acesse [share.streamlit.io](https://share.streamlit.io) → **Create app**
-2. Conecte sua conta GitHub
-3. Selecione o repositório e branch `main`
-4. **Main file path:** `src/ui/streamlit_app.py`
-5. **App URL:** escolha um slug (ex.: `assistente-lgpd-rag`)
-
-### 3. Configurar Secrets
-
-No painel do app → **Settings** → **Secrets**, cole:
+No app → **Settings** → **Secrets** → cole (use sua chave real):
 
 ```toml
 GEMINI_API_KEY = "sua-chave-aqui"
 LLM_MODEL = "gemini-2.5-flash-lite"
 EMBED_MODEL = "gemini-embedding-001"
 CHEAP_MODEL = "gemini-2.5-flash-lite"
-PREMIUM_MODEL = "gemini-2.5-pro"
+PREMIUM_MODEL = "gemini-2.5-flash"
+MAX_CORPUS_DISTANCE = "0.55"
 ```
 
-Para OpenAI, substitua por `OPENAI_API_KEY` e modelos compatíveis.
+Referência: [`.streamlit/secrets.toml.example`](../.streamlit/secrets.toml.example)
 
-### 4. Deploy e validação
+> **Importante:** `gemini-2.5-pro` não funciona no free tier (cota 0). Use `gemini-2.5-flash`.
 
-1. Clique **Deploy** (ou aguarde redeploy automático após push)
-2. Primeira execução indexa o corpus (pode levar 1–3 min)
-3. Teste:
-   - Pergunta RAG com fontes
-   - Cache hit ao repetir pergunta
-   - Tool `cite_article` no expander
-   - Routing visível na barra de info
+### 3. Deploy
 
-### 5. Troubleshooting
+1. Clique **Deploy** (ou **Reboot app** após salvar secrets)
+2. Aguarde build (`requirements.txt` instala dependências)
+3. Primeira carga indexa o PDF da LGPD (~1–3 min)
+
+### 4. Validar demo
+
+| Teste | Esperado |
+|---|---|
+| *"Posso armazenar CPF de usuários?"* | Resposta corpus + fontes |
+| *"O que a LGPD diz sobre consentimento?"* | Routing complex + resposta |
+| Repetir mesma pergunta | Cache hit (exact) |
+| *"O que é LAI?"* | Resposta geral via API (fora do corpus) |
+| Expander artigo 5 | Tool `cite_article` retorna trecho |
+
+### 5. Atualizar README
+
+Após deploy, copie a URL para `README.md`:
+
+```markdown
+**Live demo:** https://projeto-sidi.streamlit.app
+```
+
+Commit e push:
+
+```powershell
+git add README.md
+git commit -m "docs: adicionar URL da demo Streamlit"
+git push
+```
+
+## Troubleshooting
 
 | Problema | Solução |
 |---|---|
-| App crash na inicialização | Verifique secrets e se o PDF está no repo |
-| `RuntimeError: Configure API key` | Secrets não configurados ou nome errado |
-| Indexação lenta | Normal na 1ª execução; Chroma persiste em `/tmp` no free tier |
-| Corpus vazio | Confirme `data/corpus/*.pdf` commitado |
-
-> **Nota:** No Streamlit Cloud free tier, `data/chroma/` é efêmero — o app reindexa a cada cold start. Isso é aceitável para demo.
+| App crash ao abrir | Verifique Secrets (`GEMINI_API_KEY`) |
+| `Configure API key` | Secrets não salvos ou nome errado |
+| Indexação lenta | Normal no cold start; Chroma em `/tmp` é efêmero |
+| Erro 429 / cota | Aguarde 1 min; use modelos flash, não pro |
+| Corpus vazio | Confirme `data/corpus/LEI_13709_LGPD.pdf` no repo |
 
 ## Alternativas
 
-- **HuggingFace Spaces:** use `streamlit` SDK + secrets equivalentes
-- **Fly.io:** containerize com `Dockerfile` + variáveis de ambiente
+- **HuggingFace Spaces:** SDK Streamlit + secrets equivalentes
+- **Fly.io:** Dockerfile + variáveis de ambiente

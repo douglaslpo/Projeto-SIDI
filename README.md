@@ -2,9 +2,9 @@
 
 > **Assistente informacional de compliance LGPD** que responde perguntas de desenvolvedores e gestores com base em corpus local (Lei 13.709/2018), citando fontes e reduzindo custo com cache e model routing.
 
-**Live demo:** _a publicar — Streamlit Cloud_
+**Live demo:** _configurar em [share.streamlit.io](https://share.streamlit.io) — ver [Deploy](#deploy-streamlit-cloud)_
 
-**GitHub:** _a publicar_
+**GitHub:** https://github.com/douglaslpo/Projeto-SIDI
 
 **Vídeo demo (≤3 min):** _a publicar_
 
@@ -197,7 +197,7 @@ uv run python scripts/bench_cost_latency.py
 ## Checklist de entrega
 
 - [ ] Demo pública acessível (Streamlit Cloud / HF Spaces / Fly.io)
-- [ ] Repositório GitHub público
+- [x] Repositório GitHub público
 - [ ] Vídeo demo ≤3 min
 - [ ] README completo (este arquivo)
 - [ ] Corpus ≥10 páginas indexado
@@ -224,9 +224,9 @@ O arquivo `requirements.txt` já está exportado para instalação automática n
 
 | Item | URL |
 |---|---|
-| Live Demo | _TODO_ |
-| GitHub Repo | _TODO_ |
-| Vídeo Demo | _TODO_ |
+| Live Demo | _após deploy — ex.: `https://projeto-sidi.streamlit.app`_ |
+| GitHub Repo | https://github.com/douglaslpo/Projeto-SIDI |
+| Vídeo Demo | _TODO — YouTube/Loom/Drive_ |
 
 ---
 
