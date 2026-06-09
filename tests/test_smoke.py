@@ -104,10 +104,29 @@ def test_exact_cache_clear():
     from src.pipeline.cache import ExactCache
 
     cache = ExactCache()
-    cache.put("teste", "resposta")
-    assert cache.get("teste") == "resposta"
+    cache.put("teste", "resposta com fonte", has_sources=True)
+    entry = cache.get_valid("teste")
+    assert entry is not None
+    assert entry.answer == "resposta com fonte"
     cache.clear()
-    assert cache.get("teste") is None
+    assert cache.get_valid("teste") is None
+
+
+def test_cache_nao_armazena_resposta_sem_fonte():
+    from src.pipeline.cache import ExactCache, is_cacheable_answer
+
+    assert not is_cacheable_answer("Não encontrado no corpus.", has_sources=False)
+    assert not is_cacheable_answer("Resposta ok", has_sources=False)
+    assert is_cacheable_answer("Resposta geral via API.", has_sources=False, mode="general")
+
+    exact = ExactCache()
+    exact.put("q1", "Não encontrado no corpus.", has_sources=False)
+    assert exact.get_valid("q1") is None
+
+    exact.put("q2", "Resposta sobre LAI.", has_sources=False, mode="general")
+    entry = exact.get_valid("q2")
+    assert entry is not None
+    assert entry.mode == "general"
 
 
 def test_run_tool_call():

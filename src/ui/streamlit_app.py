@@ -28,12 +28,12 @@ EXAMPLE_QUESTIONS = [
     "Quais cuidados devo tomar ao reter dados pessoais?",
 ]
 
-st.set_page_config(page_title="Assistente LGPD com RAG", page_icon=":scales:", layout="centered")
+st.set_page_config(page_title="Assistente LGPD com RAG", page_icon="⚖️", layout="centered")
 
-st.title(":scales: Assistente LGPD com RAG")
+st.title("⚖️ Assistente LGPD com RAG")
 st.caption(
-    "Responde perguntas sobre LGPD com base em corpus local, cita fontes e usa "
-    "cache/model routing para reduzir custo."
+    "Responde perguntas sobre LGPD com base em corpus local, cita fontes e consulta "
+    "a API quando a pergunta está fora do corpus."
 )
 st.warning(
     "Uso educacional e informacional; não constitui parecer jurídico. "
@@ -54,6 +54,26 @@ def get_exact_cache():
 @st.cache_resource
 def get_semantic_cache():
     return SemanticCache(threshold=0.93)
+
+
+def _render_result(result: dict) -> None:
+    mode = result.get("mode", "corpus")
+    if mode == "general":
+        st.info("Resposta via API (fora do corpus LGPD local).")
+    else:
+        st.success("Resposta baseada no corpus LGPD indexado.")
+
+    if result.get("fallback_used"):
+        st.warning(
+            f"Cota do modelo premium esgotada — resposta gerada com "
+            f"`{result.get('model_used', 'modelo econômico')}`."
+        )
+
+    st.write(result["answer"])
+    if result.get("sources"):
+        with st.expander("Fontes citadas (corpus LGPD)"):
+            for source, page in result["sources"]:
+                st.write(f"- `{source}:p{page}`")
 
 
 try:
@@ -95,21 +115,23 @@ with st.expander("Consultar artigo da LGPD (tool `cite_article`)"):
         st.text(result)
         st.caption("Exemplo de function-calling: `run_tool_call('cite_article', '{\"article_number\": 5}')`")
 
-query = st.text_input(
-    "Sua pergunta:",
-    placeholder="Ex.: Posso armazenar CPF de usuários?",
-    key="query_input",
-)
+with st.form("query_form", clear_on_submit=False):
+    query = st.text_input(
+        "Sua pergunta:",
+        placeholder="Ex.: Posso armazenar CPF de usuários?",
+        key="query_input",
+    )
+    submitted = st.form_submit_button("Perguntar")
 
-if query:
+if submitted and query:
     with trace("query_handle", query=query) as ctx:
         trace_id = ctx["trace_id"]
 
-        cached = exact_cache.get(query)
+        cached = exact_cache.get_valid(query)
         if cached:
             st.success("Cache hit (exact)")
-            st.write(cached)
-            log_event("cache_hit", trace_id=trace_id, layer="exact")
+            _render_result({"answer": cached.answer, "mode": cached.mode, "sources": []})
+            log_event("cache_hit", trace_id=trace_id, layer="exact", mode=cached.mode)
             st.stop()
 
         try:
@@ -120,8 +142,8 @@ if query:
 
         if cached:
             st.success("Cache hit (semantic)")
-            st.write(cached)
-            log_event("cache_hit", trace_id=trace_id, layer="semantic")
+            _render_result({"answer": cached.answer, "mode": cached.mode, "sources": []})
+            log_event("cache_hit", trace_id=trace_id, layer="semantic", mode=cached.mode)
             st.stop()
 
         try:
@@ -139,15 +161,27 @@ if query:
             st.error(f"Erro ao processar pergunta: {exc}")
             st.stop()
 
-        st.write(result["answer"])
-        if result.get("sources"):
-            with st.expander("Fontes citadas"):
-                for source, page in result["sources"]:
-                    st.write(f"- `{source}:p{page}`")
+        _render_result(result)
 
-        exact_cache.put(query, result["answer"])
-        semantic_cache.put(query, result["answer"])
-        log_event("answer_generated", trace_id=trace_id, sources=len(result.get("sources", [])))
+        mode = result.get("mode", "corpus")
+        exact_cache.put(
+            query,
+            result["answer"],
+            has_sources=bool(result.get("sources")),
+            mode=mode,
+        )
+        semantic_cache.put(
+            query,
+            result["answer"],
+            has_sources=bool(result.get("sources")),
+            mode=mode,
+        )
+        log_event(
+            "answer_generated",
+            trace_id=trace_id,
+            sources=len(result.get("sources", [])),
+            mode=mode,
+        )
 
 st.divider()
 st.caption(

@@ -41,7 +41,8 @@ def _normalize(text: str) -> str:
 def classify_complexity(query: str) -> RouteDecision:
     """Classifica complexidade da query para escolher modelo (cheap vs premium)."""
     cheap_model = os.environ.get("CHEAP_MODEL", "gemini-2.5-flash-lite")
-    premium_model = os.environ.get("PREMIUM_MODEL", "gemini-2.5-pro")
+    # gemini-2.5-pro não tem cota no free tier — use flash como "premium" local.
+    premium_model = os.environ.get("PREMIUM_MODEL", "gemini-2.5-flash")
 
     normalized = _normalize(query)
     word_count = len(normalized.split())
