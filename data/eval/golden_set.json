@@ -1,0 +1,62 @@
+[
+  {
+    "question": "Posso armazenar CPF de usuários?",
+    "ground_truth": "Sim, desde que haja base legal e finalidade específica para o tratamento de dados pessoais, com observância dos princípios da LGPD como necessidade, adequação e segurança."
+  },
+  {
+    "question": "O que a LGPD diz sobre consentimento?",
+    "ground_truth": "O consentimento deve ser livre, informado e inequívoco, fornecido por escrito ou por outro meio que demonstre a manifestação de vontade do titular, para finalidades determinadas."
+  },
+  {
+    "question": "Quais são os direitos do titular dos dados?",
+    "ground_truth": "O titular tem direito a confirmação de tratamento, acesso, correção, anonimização, portabilidade, eliminação, informação sobre compartilhamento e revogação do consentimento."
+  },
+  {
+    "question": "O que é base legal para tratamento de dados pessoais?",
+    "ground_truth": "São hipóteses legais que autorizam o tratamento sem consentimento, como cumprimento de obrigação legal, execução de contrato, legítimo interesse e proteção do crédito, entre outras previstas no art. 7º."
+  },
+  {
+    "question": "Quais cuidados devo tomar ao reter dados pessoais?",
+    "ground_truth": "Os dados devem ser eliminados após o término do tratamento, respeitando prazos legais e necessidade para a finalidade, com medidas de segurança e transparência ao titular."
+  },
+  {
+    "question": "O que é dado pessoal segundo a LGPD?",
+    "ground_truth": "Dado pessoal é informação relacionada a pessoa natural identificada ou identificável, como nome, CPF, endereço, e-mail e outros que permitam identificação."
+  },
+  {
+    "question": "Quem é o controlador na LGPD?",
+    "ground_truth": "Controlador é a pessoa natural ou jurídica que toma as decisões referentes ao tratamento de dados pessoais."
+  },
+  {
+    "question": "Quem é o operador na LGPD?",
+    "ground_truth": "Operador é a pessoa natural ou jurídica que realiza o tratamento de dados pessoais em nome do controlador."
+  },
+  {
+    "question": "O que é tratamento de dados pessoais?",
+    "ground_truth": "Tratamento é toda operação com dados pessoais, como coleta, produção, recepção, classificação, utilização, acesso, reprodução, transmissão, distribuição, processamento, arquivamento, armazenamento, eliminação, avaliação, controle, modificação, comunicação, transferência, difusão ou extração."
+  },
+  {
+    "question": "Quando o consentimento pode ser revogado?",
+    "ground_truth": "O titular pode revogar o consentimento a qualquer momento mediante manifestação expressa, por procedimento gratuito e facilitado, ratificados os tratamentos realizados antes da revogação."
+  },
+  {
+    "question": "O que é incidente de segurança com dados pessoais?",
+    "ground_truth": "É qualquer evento adverso confirmado relacionado a violação de dados pessoais, como acesso não autorizado, vazamento ou perda, que possa acarretar risco ou dano aos titulares."
+  },
+  {
+    "question": "Preciso informar a finalidade do tratamento ao titular?",
+    "ground_truth": "Sim, o controlador deve fornecer informações claras sobre a finalidade específica do tratamento, conforme o princípio da transparência e direitos do titular."
+  },
+  {
+    "question": "Posso tratar dados pessoais sensíveis?",
+    "ground_truth": "Dados sensíveis só podem ser tratados em hipóteses específicas previstas em lei, como consentimento específico, cumprimento de obrigação legal ou proteção da vida."
+  },
+  {
+    "question": "O que é anonimização na LGPD?",
+    "ground_truth": "Anonimização é o processo por meio do qual um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo, considerados os meios técnicos razoáveis disponíveis."
+  },
+  {
+    "question": "Qual o papel do encarregado de dados (DPO)?",
+    "ground_truth": "O encarregado atua como canal de comunicação entre o controlador, os titulares e a autoridade nacional, orientando funcionários e contratados sobre práticas de proteção de dados."
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "faithfulness": 0.88,
+  "answer_relevancy": 0.74,
+  "context_precision": 0.67,
+  "n_queries": 15,
+  "method": "embedding_proxy_extractive_answers"
+}
